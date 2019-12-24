@@ -1,6 +1,7 @@
 import unittest
 from modules.card import Card
 
+
 class TestCard(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -42,3 +43,8 @@ class TestCard(unittest.TestCase):
             self.assertRaises(ValueError, Card(1, 0))
         with self.assertRaises(ValueError):
             self.assertRaises(ValueError, Card(1, 5))
+
+    def test_hash(self):
+        self.assertNotEqual(hash(self.target), hash(self.target_equal))
+        hash_equal_card = Card(self.target.rank, self.target.suit)
+        self.assertEqual(hash(hash_equal_card), hash(self.target))

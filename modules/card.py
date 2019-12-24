@@ -42,3 +42,6 @@ class Card:
 
     def __lt__(self, other):
         return self.rank < other.rank
+
+    def __hash__(self):
+        return hash((self.rank, self.suit))
