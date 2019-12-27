@@ -14,10 +14,20 @@ class Deck(MutableSequence):
     A Deck with 52 Cards upon init
     """
 
-    def __init__(self):
-        self._deck = [Card(rank, suit)
-                      for rank in CardEnum.RANK_DICT.value
-                      for suit in CardEnum.SUIT_DICT.value]
+    def __init__(self, cards=None):
+        if cards is None:
+            self.cards = [Card(rank, suit)
+                          for rank in CardEnum.RANK_DICT.value
+                          for suit in CardEnum.SUIT_DICT.value]
+        else:
+            self.cards = []
+            for card in cards:
+                if isinstance(card, Card):
+                    self.cards.append(card)
+                elif isinstance(card, tuple):
+                    self.cards.append(Card(card[0], card[1]))
+                else:
+                    raise ValueError
 
     def __str__(self):
         return 'Deck of {} cards'.format(len(self))
@@ -25,29 +35,36 @@ class Deck(MutableSequence):
     def __repr__(self):
         pass
 
-    def __getitem__(self, item):
-        return self._deck[item]
+    def __getitem__(self, index):
+        return self.cards[index]
 
-    def __setitem__(self, key, value):
-        self._deck[key] = value
+    def __setitem__(self, index, value):
+        self.cards[index] = value
 
-    def __delitem__(self, key):
-        self._deck.remove(key)
+    def __delitem__(self, index):
+        self.cards.remove(index)
 
     def __len__(self):
-        return len(self._deck)
+        return len(self.cards)
+
+    def __add__(self, other):
+        if isinstance(other, Deck):
+            return self.__class__(self.cards + other.cards)
+        elif isinstance(other, type(self.cards)):
+            return self.__class__(self.cards + other)
+        return self.__class__(self.cards + list(other))
 
     def insert(self, index, card):
-        self._deck.insert(index, card)
+        self.cards.insert(index, card)
 
     def shuffle(self):
-        shuffle(self._deck)
+        shuffle(self.cards)
 
     def offer(self):
-        return self._deck.pop()
+        return self.cards.pop()
 
     def offer_random(self):
         index = randrange(len(self))
-        card = self._deck[index]
-        del self._deck[index]
+        card = self.cards[index]
+        del self.cards[index]
         return card
